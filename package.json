@@ -1,0 +1,19 @@
+
+{
+  "name"         : "book-scrape",
+  "version"      : "0.0.1",
+  "description"  : "Scrape the Web",
+  "main"         : "server.js",
+  "author"       : "arfeifei",
+  "dependencies" : {
+    "express"    : "latest",
+    "request"    : "latest",
+    "cheerio"    : "latest",
+    "del"        : "latest",
+    "http"       : "latest",    
+    "socket.io"  : "latest",
+    "socket.io-client" : "latest",
+    "bootstrap"  : "latest",
+    "jquery"     : "latest"
+  }
+}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Book Scraper</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link href="/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<script src="/lib/jquery/dist/jquery.min.js"></script>
+<script src="/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/lib/socket.io-client/dist/socket.io.js"></script>
+<style>
+.monitor {
+	background-color: rgb(7,54,66);
+	color: rgb(0,198,0);
+	font: 15px arial, sans-serif;
+}
+</style>
+<script>
+$( document ).ready(function() {
+	var socket = io.connect('/');
+	socket.on('alert', function(data) {
+		alert(data.message);
+	});
+	socket.on('status', function(data) {
+		var $c = $('#txtConsole');
+		var v = $c.val();
+		$c.val(v + data.message);
+		$c.scrollTop($c[0].scrollHeight);
+	});
+	$('#bt-start').on('click',function(){
+		$('#txtConsole').val('');
+		// validate first
+		socket.emit('scrape', {
+			base  : $('#base').val(),
+			proxy : $('#proxy').val(),
+			ext   : $('#ext').val(),
+			title : $('#titleSel').val(),
+			text  : $('#textSel').val(),
+			start : $('#start').val(),
+			end   : $('#end').val()
+		});
+	});
+	$('#bt-cancel').on('click',function(){
+		socket.emit('cancel', {});
+	});
+});
+</script>
+</head>
+<body>
+	<div class="container">
+		<h1>Book Scraper</h1>
+		<form class="well">
+			<div class="row">
+				<label for="txtConsole">Console</label>
+				<textarea class="form-control monitor" rows="15" name="txtConsole" id="txtConsole"></textarea>
+			</div>
+			<p>&nbsp;</p>
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label" for="base">Website</label>
+				<div class="col-sm-10 input-group">
+					<span class="input-group-addon">URL</span>
+					<input type="text" class="form-control" placeholder="Enter website URL" name="base" id="base" value="http://www.miaojianggushi2.cc/" required />
+					<span class="input-group-addon">Proxy</span>
+					<input type="text" class="form-control" placeholder="http://proxy.company.com:8080 or Empty" name="proxy" id="proxy" value=""/>
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label">Scrape Range:</label>
+				<div class="col-sm-10 input-group">
+					<span class="input-group-addon">Start</span>
+					<input type="text" class="form-control" placeholder="Enter sequence number for start chapter" name="start" id="start" value="244" required />
+					<span class="input-group-addon">End</span>
+					<input type="text" class="form-control" placeholder="Enter sequence number for end chapter" name="end" id="end" value="250" required />
+					<span class="input-group-addon">Suffix</span>
+					<input type="text" class="form-control" placeholder="Like .html .php or Empty" name="ext" id="ext" value=".html"/>
+				</div>
+			</div>			
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label">CSS Selector</label>
+				<div class="col-sm-10 input-group">
+					<span class="input-group-addon">.title</span>
+					<input type="text" class="form-control" placeholder="Enter CSS syntax selector for chapter title" name="titleSel" id="titleSel" value=".chaptertitle" required/>
+					<span class="input-group-addon">.text</span>
+					<input type="text" class="form-control" placeholder="Enter CSS syntax selector for chapter content" name="textSel" id="textSel" value="#BookText" required/>
+				</div>
+			</div>
+		</form>
+		<p>&nbsp;</p>
+		<div class="col-md-4">
+			<button type="button" class="btn btn-primary" id="bt-start"><i class="glyphicon glyphicon-play"></i> Scrape</button>
+			<button type="button" class="btn btn-danger" id="bt-cancel"><i class="glyphicon glyphicon-stop"></i> Cancel</button>
+			<a href="/download" class="btn btn-success" target="_blank"><i class="glyphicon glyphicon-download"></i> Download</a>
+		</div>
+	</div>
+</body>
+</html>
