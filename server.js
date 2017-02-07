@@ -15,7 +15,6 @@ let proxy = '';
 function scrape(idx, ext, io) {
 	const url = base + idx + ext;
 	const reqUrl = (proxy && proxy != '') ? { 'url': url, 'proxy': proxy } : url;
-
 	request(reqUrl, (error, response, html) => {
 		if (!error) {
 			let $ = cheerio.load(html);
@@ -38,8 +37,11 @@ function scrape(idx, ext, io) {
 			})
 
 			fs.writeFile('tmp/' + idx, '<h2>' + json.title + '</h2><br><br>' + json.text + '<br><br>', (err) => {
-				if (err) throw err;
-				io.emit('status', { message: '[' + url + '] finished.\n' });
+				if (err) {
+					io.emit('status', { message: 'ERROR ' + url + '\r\n' + err.stack + '\n' });
+				} else{
+					io.emit('status', { message: '[' + url + '] finished.\n' });
+				}
 			})
 		} else {
 			io.emit('status', { message: 'ERROR ' + url + '\r\n' + error.stack + '\n' });
