@@ -1,19 +1,25 @@
-
 {
-  "name"         : "book-scrape",
-  "version"      : "0.0.1",
-  "description"  : "Scrape the Web",
-  "main"         : "server.js",
-  "author"       : "arfeifei",
-  "dependencies" : {
-    "express"    : "latest",
-    "request"    : "latest",
-    "cheerio"    : "latest",
-    "del"        : "latest",
-    "http"       : "latest",    
-    "socket.io"  : "latest",
-    "socket.io-client" : "latest",
-    "bootstrap"  : "latest",
-    "jquery"     : "latest"
+  "name": "book-scrape",
+  "version": "0.0.1",
+  "description": "Scrape the Web",
+  "main": "server.js",
+  "author": "arfeifei",
+  "scripts": {
+    "start": "npm run open",
+    "open": "concurrently \"node server.js\" \"start http://localhost:8080\""
+  },
+  "dependencies": {
+    "express": "latest",
+    "request": "latest",
+    "cheerio": "latest",
+    "del": "latest",
+    "http": "latest",
+    "socket.io": "latest",
+    "socket.io-client": "latest",
+    "bootstrap": "latest",
+    "jquery": "latest"
+  },
+  "devDependencies": {
+    "concurrently": "^3.1.0"
   }
 }
