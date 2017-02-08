@@ -24,14 +24,14 @@ function scrape(idx, ext, io) {
 				text: ''
 			};
 
-			$(titleSel).filter(function () {
-				let data = $(this);
+			$(titleSel).filter((index, node) => {
+				let data = $(node);
 				title = data.html();
 				json.title = title;
 			})
 
-			$(textSel).filter(function () {
-				let data = $(this);
+			$(textSel).filter((index, node) => {
+				let data = $(node);
 				text = data.html();
 				json.text = text;
 			})
@@ -65,7 +65,7 @@ function concat() {
 io.on('connection', (socket) => {
 	io.emit('status', { message: 'Ready... \n' });
 
-	socket.on('cancel', (data) => {
+	socket.on('cancel', () => {
 		io.emit('status', { message: 'Scraper STOPPED by request!\n' });
 		cancel = true;
 	});
