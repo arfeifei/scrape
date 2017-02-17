@@ -35,14 +35,17 @@ function scrape(idx, ext, io) {
 				text = data.html();
 				json.text = text;
 			})
-
-			fs.writeFile('tmp/' + idx, '<h2>' + json.title + '</h2><br><br>' + json.text + '<br><br>', (err) => {
-				if (err) {
-					io.emit('status', { message: 'ERROR ' + url + '\r\n' + err.stack + '\n' });
-				} else{
-					io.emit('status', { message: '[' + url + '] finished.\n' });
-				}
-			})
+			if( json.title && json.text ) {
+				fs.writeFile('tmp/' + idx, '<h2>' + json.title + '</h2><br><br>' + json.text + '<br><br>', (err) => {
+					if (err) {
+						io.emit('status', { message: 'ERROR ' + url + '\r\n' + err.stack + '\n' });
+					} else{
+						io.emit('status', { message: '[' + url + '] finished.\n' });
+					}
+				})				
+			} else {
+				io.emit('status', { message: 'ERROR ' + url + ' is EMPTY.\n' });
+			}
 		} else {
 			io.emit('status', { message: 'ERROR ' + url + '\r\n' + error.stack + '\n' });
 			console.error('ERROR:' + url + '\r\n' + error.stack);
@@ -50,7 +53,7 @@ function scrape(idx, ext, io) {
 	});
 }
 
-function concat() {
+function concat(data) {
 	const output = __dirname + '/tmp';
 	del(['output.html']).then(paths => {
 		fs.readdir(output, (err, files) => {
@@ -58,6 +61,7 @@ function concat() {
 			files.forEach(file => {
 				fs.appendFileSync('output.html', fs.readFileSync(output + '/' + file, 'utf8'), 'utf8');
 			});
+			fs.appendFileSync('output.html', '<a href="'+ data.base + data.end +  (data.ext ? data.ext : '') +'">Last chapter: ' + data.base + data.end + (data.ext ? data.ext : '') + '</a>', 'utf8');
 		});
 	});
 }
@@ -90,7 +94,7 @@ io.on('connection', (socket) => {
 				if (idx == data.end || cancel) {
 					clearInterval(i);
 					setTimeout(() => {
-						concat();
+						concat(data);
 						io.emit('alert', { message: 'Finished total ' + (idx - data.start) + ' chapters \n' });
 					}, 5000);
 				}
